@@ -7,12 +7,25 @@ export default function TodosForm() {
 
   const { setStorageItem } = useStorage();
 
-  function handleUpdateTodos() {
+  function checkTitle(): boolean {
     setTodoError((todoError) => null);
     if (todoTitle === "") {
       setTodoError((todoError) => "Title could not be null.");
-      return;
+      return false;
     }
+    return true;
+  }
+
+  function handleUpdateTodosSecond() {
+    if (!checkTitle()) return;
+    setStorageItem({
+      key: "todos2",
+      value: todoTitle,
+    });
+  }
+
+  function handleUpdateTodos() {
+    if (!checkTitle()) return;
     setStorageItem({
       key: "todos",
       value: todoTitle,
@@ -29,6 +42,7 @@ export default function TodosForm() {
           onChange={(e) => setTodoTitle(e.target.value)}
         />
         <button onClick={handleUpdateTodos}>Add todos</button>
+        <button onClick={handleUpdateTodosSecond}>Add todos 2</button>
       </div>
     </section>
   );

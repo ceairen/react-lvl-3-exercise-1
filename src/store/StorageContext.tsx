@@ -18,7 +18,7 @@ function loadDatas(): AppStorage {
       } catch (e) {
         appStorageItems.push({
           key: key,
-          value: value,
+          value: [value],
         });
       }
     }
@@ -73,6 +73,25 @@ export const StorageProvider: React.FC<any> = ({ children }) => {
       localStorage.setItem(storageData.key, JSON.stringify(storageData.value));
     });
   }, [storage]);
+
+  useEffect(() => {
+    function handleStorageChanged() {
+      setStorage(loadDatas());
+    }
+    window.addEventListener("storage", handleStorageChanged);
+    return () => {
+      window.removeEventListener("storage", handleStorageChanged);
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval: NodeJS.Timer = setInterval(function () {
+      setStorage(loadDatas());
+    }, 10000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   function getStorageItem(key: string): AppStorageData | null {
     const item = storage.find(
